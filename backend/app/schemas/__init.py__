@@ -1,0 +1,5 @@
+# backend/app/schemas/__init__.py
+
+from .UserValidation import UserCreate, LoginRequest, Token, UserOut
+
+__all__ = ["UserCreate", "LoginRequest", "Token", "UserOut"]
