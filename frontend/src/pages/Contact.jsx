@@ -16,16 +16,11 @@ export default function Contact() {
   const onSubmit = async (data) => {
     setLoading(true);
     setSuccess(false);
-
     try {
-   
       await new Promise((resolve) => setTimeout(resolve, 1500));
       console.log("Contact Form Submitted:", data);
-      
       setSuccess(true);
       reset();
-      
-     
       setTimeout(() => setSuccess(false), 5000);
     } catch (error) {
       console.error("Error:", error);
@@ -35,7 +30,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
      
       <div className="max-w-7xl mx-auto text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
@@ -48,7 +43,7 @@ export default function Contact() {
 
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10">
 
-     
+        
         <div className="space-y-8">
 
          
@@ -74,8 +69,9 @@ export default function Contact() {
             </div>
           </div>
 
-      
+        
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6">
+
           
             <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
               <div className="flex items-start gap-4">
@@ -93,7 +89,7 @@ export default function Contact() {
               </div>
             </div>
 
-        
+         
             <div className="space-y-4">
               <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
                 <div className="flex items-center gap-4">
@@ -111,6 +107,7 @@ export default function Contact() {
 
               <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
                 <div className="flex items-center gap-4">
+                 
                   <div className="p-3 bg-purple-100 rounded-xl">
                     <Mail className="w-6 h-6 text-purple-600" />
                   </div>
@@ -125,6 +122,7 @@ export default function Contact() {
             </div>
           </div>
 
+        
           <div className="gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl shadow-xl p-6">
             <div className="flex items-center gap-3 mb-4">
               <Clock className="w-6 h-6" />
@@ -138,7 +136,7 @@ export default function Contact() {
           </div>
         </div>
 
-      
+       
         <div className="bg-white rounded-2xl shadow-2xl p-8 lg:p-10 border border-gray-200">
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-3">Send us a Message</h2>
@@ -146,7 +144,7 @@ export default function Contact() {
           </div>
 
           {success && (
-            <div className="mb-6 p-5 bg-green-50 border-2 border-green-200 rounded-xl flex items-center gap-3 text-green-800 animate-pulse">
+            <div className="mb-6 p-5 bg-green-50 border-2 border-green-200 rounded-xl flex items-center gap-3 text-green-800">
               <CheckCircle className="w-8 h-8 text-green-600" />
               <div>
                 <p className="font-bold">Thank You!</p>
@@ -156,7 +154,7 @@ export default function Contact() {
           )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-       
+
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Full Name <span className="text-red-500">*</span>
@@ -164,7 +162,7 @@ export default function Contact() {
               <input
                 type="text"
                 placeholder="Prabesh Poudel"
-                className="w-full px-5 py-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-gray-900 placeholder-gray-400"
+                className="w-full px-5 py-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-gray-900 placeholder-gray-400"
                 {...register("name", {
                   required: "Name is required",
                   minLength: { value: 2, message: "Name must be at least 2 characters" }
@@ -173,7 +171,6 @@ export default function Contact() {
               {errors.name && <p className="mt-2 text-sm text-red-600">{errors.name.message}</p>}
             </div>
 
-        
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Email Address <span className="text-red-500">*</span>
@@ -181,7 +178,7 @@ export default function Contact() {
               <input
                 type="email"
                 placeholder="you@example.com"
-                className="w-full px-5 py-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-gray-900 placeholder-gray-400"
+                className="w-full px-5 py-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-gray-900 placeholder-gray-400"
                 {...register("email", {
                   required: "Email is required",
                   pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email address" }
@@ -190,7 +187,6 @@ export default function Contact() {
               {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>}
             </div>
 
-         
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Your Message <span className="text-red-500">*</span>
@@ -198,7 +194,7 @@ export default function Contact() {
               <textarea
                 rows="6"
                 placeholder="How can we help you today? Let us know your query..."
-                className="w-full px-5 py-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-gray-900 placeholder-gray-400 resize-none"
+                className="w-full px-5 py-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-gray-900 placeholder-gray-400 resize-none"
                 {...register("message", {
                   required: "Message is required",
                   minLength: { value: 10, message: "Message must be at least 10 characters" }

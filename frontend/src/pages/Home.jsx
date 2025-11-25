@@ -1,95 +1,271 @@
-// src/pages/Home.jsx
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { 
-  ShoppingCart, ArrowRight, Package, Star, 
-  Truck, Shield, CreditCard, RefreshCw 
+  Truck, Shield, RefreshCw, CreditCard, ArrowRight, 
+  Loader2, Package, ShoppingCart, Tag, Sparkles, TrendingUp 
 } from "lucide-react";
 
 export default function Home() {
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [newArrivals, setNewArrivals] = useState([]);
+  const [trendingProducts, setTrendingProducts] = useState([]);
+  const [loadingNew, setLoadingNew] = useState(true);
+  const [loadingTrending, setLoadingTrending] = useState(true);
 
-  const slides = [
-    {
-      category: "Laptops",
-      title: "Latest Gaming & Office Laptops",
-      subtitle: "Up to 40% OFF • Free Delivery",
-      gradient: "from-purple-600 to-pink-600",
-      image: "https://cdn.assets.prezly.com/cc1e3f98-2fc8-4410-8dde-76f813c9691c/Swift-Go-16-02.jpg",
-      link: "/products?category=laptop"
-    },
-    {
-      category: "Keyboards",
-      title: "Mechanical & Wireless Keyboards",
-      subtitle: "RGB • Hot-Swappable • Premium Build",
-      gradient: "from-blue-600 to-cyan-600",
-      image: "https://m.media-amazon.com/images/I/71+p3Hx03dL._AC_SL1500_.jpg",
-      link: "/products?category=keyboard"
-    },
-    {
-      category: "Mouse",
-      title: "Gaming & Productivity Mouse",
-      subtitle: "Ultra Light • 8K Polling • Pro Sensors",
-      gradient: "from-green-600 to-emerald-600",
-      image: "https://assetsio.gnwcdn.com/g502x_f9QuuM8.jpeg?width=1200&height=900&fit=crop&quality=100&format=png&enable=upscale&auto=webp",
-      link: "/products?category=mouse"
-    },
-    {
-      category: "Monitors",
-      title: "4K • 144Hz • OLED Gaming Monitors",
-      subtitle: "HDR • 1ms • FreeSync Premium",
-      gradient: "from-orange-600 to-red-600",
-      image: "https://image.benq.com/is/image/benqco/monitor-all-series-kv-3-m?$ResponsivePreset$&fmt=png-alpha",
-      link: "/products?category=monitor"
-    },
-    {
-      category: "Headphones",
-      title: "Wireless ANC & Gaming Headsets",
-      subtitle: "50+ Hour Battery • Hi-Res Audio",
-      gradient: "from-indigo-600 to-purple-600",
-      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGijQnltCMSQzDopr8skpcSl3DNpu7E_2A0A&s",
-      link: "/products?category=headphone"
-    }
+
+  const categories = [
+    { name: "Laptops",     image: "https://cdn.assets.prezly.com/cc1e3f98-2fc8-4410-8dde-76f813c9691c/Swift-Go-16-02.jpg", category: "laptop" },
+    { name: "Keyboards",   image: "https://gennext.com.np/wp-content/uploads/2020/12/meetion_mk04_keyboard_4.jpg", category: "keyboard" },
+    { name: "Mouse",       image: "https://assetsio.gnwcdn.com/g502x_f9QuuM8.jpeg?width=1200&height=900&fit=crop&quality=100&format=png&enable=upscale&auto=webp", category: "mouse" },
+    { name: "Monitors",    image: "https://image.benq.com/is/image/benqco/monitor-all-series-kv-3-m?$ResponsivePreset$&fmt=png-alpha", category: "monitor" },
+    { name: "Headphones",  image: "https://www.sony.com.au/image/6539959b6c50b04c5cec4e23134c1137?fmt=pjpeg&wid=1014&hei=396&bgcolor=F1F5F9&bgc=F1F5F9", category: "headphone" }
   ];
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000);
-    return () => clearInterval(interval);
+    fetchNewArrivals();
+    fetchTrendingProducts();
   }, []);
+
+  const fetchNewArrivals = async () => {
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/admin/new-arrivals");
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setNewArrivals(Array.isArray(data) ? data.slice(0, 5) : []);
+    } catch (err) { console.error(err); }
+    finally { setLoadingNew(false); }
+  };
+
+  const fetchTrendingProducts = async () => {
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/trending-products");
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setTrendingProducts(Array.isArray(data) ? data : []);
+    } catch (err) { console.error(err); }
+    finally { setLoadingTrending(false); }
+  };
+
+  const addToCart = (product) => {
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const existing = cart.find(item => item.id === product.id);
+    if (existing) existing.quantity += 1;
+    else cart.push({ ...product, quantity: 1 });
+    localStorage.setItem("cart", JSON.stringify(cart));
+    alert(`${product.name} added to cart!`);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
-    
-      <div className="max-w-7xl mx-auto px-6 py-20">
-        <h2 className="text-5xl font-bold text-center text-gray-800 mb-16">
-          Shop by Category
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
-          {slides.map((cat, i) => (
-            <Link
-              key={i}
-              to={cat.link}
-              className="group relative overflow-hidden rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-6"
-            >
-              <img
-                src={cat.image}
-                alt={cat.category}
-                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-700"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-70" />
-              <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
-                <h3 className="text-3xl font-bold mb-2">{cat.category}</h3>
-                <p className="text-lg opacity-90 flex items-center gap-2">
-                  Shop Now <ArrowRight className="w-6 h-6 group-hover:translate-x-3 transition-transform" />
-                </p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
 
+    
+      <section className="px-4 py-10 bg-white">
+        <div className="max-w-7xl mx-auto rounded-3xl overflow-hidden shadow-2xl">
+          <img
+            src="/hero.png"
+            alt="Tech Store Nepal"
+            className="w-full h-auto object-cover"
+            style={{ aspectRatio: "21/9", maxHeight: "600px" }}
+            onError={(e) => e.target.src = "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=2100&h=900&fit=crop"}
+          />
+        </div>
+      </section>
+
+  
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <h2 className="text-5xl font-bold text-gray-800 mb-4">Shop by Category</h2>
+          <p className="text-xl text-gray-600 mb-12">Best gear for work & play</p>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
+            {categories.map((cat) => (
+              <Link 
+                key={cat.name} 
+                to='/product' 
+                className="group block"
+              >
+                <div className="aspect-square rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 relative">
+                  <img 
+                    src={cat.image} 
+                    alt={cat.name} 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                  />
+                  <div className="absolute inset-0 gradient-to-t from-black/70 to-transparent" />
+                  <div className="absolute bottom-6 left-0 right-0 text-white text-center">
+                    <h3 className="text-2xl font-bold">{cat.name}</h3>
+                    <p className="text-sm mt-2 opacity-90 flex items-center justify-center gap-2">
+                      Shop Now <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+     
+      <section className="py-20 bg-gray-100">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-bold text-gray-800 flex items-center justify-center gap-4">
+              <Sparkles className="w-12 h-12 text-yellow-500" />
+              New Arrivals
+              <Sparkles className="w-12 h-12 text-yellow-500" />
+            </h2>
+            <p className="text-xl text-gray-600 mt-4">Fresh stock just landed!</p>
+          </div>
+
+          {loadingNew ? (
+            <div className="flex justify-center py-20">
+              <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
+            </div>
+          ) : newArrivals.length === 0 ? (
+            <div className="text-center py-20">
+              <Package className="w-20 h-20 mx-auto text-gray-300 mb-4" />
+              <p className="text-xl text-gray-600">No new products yet</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
+              {newArrivals.map((product) => (
+                <div key={product.id} className="bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100">
+                  <Link to={`/product/${product.id}`} className="block relative">
+                    <div className="h-56 bg-gray-100">
+                      <img
+                        src={product.image || "https://via.placeholder.com/400x400?text=No+Image"}
+                        alt={product.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                    <div className="absolute top-3 left-3 bg-red-600 text-white px-3 py-1.5 rounded-full text-xs font-bold">
+                      NEW
+                    </div>
+                   
+                    <div className="absolute top-3 right-3 bg-purple-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1">
+                      <Tag className="w-3 h-3" />
+                      {product.category || "Electronics"}
+                    </div>
+                  </Link>
+
+                  <div className="p-4">
+                    <Link to={`/product/${product.id}`}>
+                      <h3 className="font-semibold text-gray-800 hover:text-blue-600 transition-colors line-clamp-2 text-sm">
+                        {product.name}
+                      </h3>
+                    </Link>
+                    <div className="flex items-center justify-between mt-3">
+                      <p className="text-xl font-bold text-gray-800">
+                        Rs {Number(product.price || 0).toLocaleString()}
+                      </p>
+                      <button
+                        onClick={(e) => { e.preventDefault(); addToCart(product); }}
+                        className="p-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all shadow-md"
+                      >
+                        <ShoppingCart className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+    
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-bold text-gray-800 flex items-center justify-center gap-4">
+              <TrendingUp className="w-12 h-12 text-orange-500 animate-pulse" />
+              Trending Products
+              <TrendingUp className="w-12 h-12 text-orange-500 animate-pulse" />
+            </h2>
+            <p className="text-xl text-gray-600 mt-4">Most loved by customers right now!</p>
+          </div>
+
+          {loadingTrending ? (
+            <div className="flex justify-center py-20">
+              <Loader2 className="w-12 h-12 animate-spin text-orange-600" />
+            </div>
+          ) : trendingProducts.length === 0 ? (
+            <div className="text-center py-20">
+              <Package className="w-20 h-20 mx-auto text-gray-300 mb-4" />
+              <p className="text-xl text-gray-600">No orders yet. Be the first!</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
+              {trendingProducts.map((product, index) => (
+                <div key={product.id || index} className="bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 relative">
+                  <Link to={`/product/${product.id}`} className="block relative">
+                    <div className="h-56 bg-gray-100">
+                      <img
+                        src={product.image || "https://via.placeholder.com/400x400?text=Hot+Item"}
+                        alt={product.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+
+                    <div className="absolute top-3 left-3 gradient-to-r from-orange-500 to-red-600 text-white px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
+                      <TrendingUp className="w-4 h-4" />
+                      #{product.rank || index + 1}
+                    </div>
+
+                  
+                    <div className="absolute top-3 right-3 bg-purple-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1">
+                      <Tag className="w-3 h-3" />
+                      {product.category && product.category !== "Uncategorized" ? product.category : "Electronics"}
+                    </div>
+                  </Link>
+
+                  <div className="p-4">
+                    <Link to={`/product/${product.id}`}>
+                      <h3 className="font-semibold text-gray-800 hover:text-blue-600 transition-colors line-clamp-2 text-sm">
+                        {product.name}
+                      </h3>
+                    </Link>
+                    <div className="flex items-center justify-between mt-3">
+                      <p className="text-xl font-bold text-gray-800">
+                        Rs {Number(product.price || 0).toLocaleString()}
+                      </p>
+                      <button
+                        onClick={(e) => { e.preventDefault(); addToCart(product); }}
+                        className="p-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all shadow-md"
+                      >
+                        <ShoppingCart className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+    
+      <section className="py-16 bg-white border-t">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            {[
+              { icon: Truck, title: "Free Delivery", desc: "Above Rs 19999" },
+              { icon: Shield, title: "100% Genuine", desc: "Original Products" },
+              { icon: RefreshCw, title: "Easy Returns", desc: "7 Days Policy" },
+              { icon: CreditCard, title: "Secure Payment", desc: "eSewa" }
+            ].map((item, i) => (
+              <div key={i} className="group">
+                <div className="w-20 h-20 mx-auto mb-4 bg-blue-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-all duration-300">
+                  <item.icon className="w-10 h-10 text-white" />
+                </div>
+                <h4 className="font-bold text-gray-800">{item.title}</h4>
+                <p className="text-sm text-gray-600 mt-1">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
+
+
+
+

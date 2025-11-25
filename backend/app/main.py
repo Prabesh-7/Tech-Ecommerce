@@ -16,6 +16,7 @@ from app.routes.user_routes import router as user_router
 from app.routes.order_routes import router as order_router
 
 
+
 app = FastAPI(title="E-commerce API")
 
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
@@ -26,7 +27,6 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],  
     allow_headers=["*"],
-   
 )
 
 @app.exception_handler(Exception)
@@ -44,6 +44,7 @@ app.include_router(upload_router)
 app.include_router(user_router)
 
 app.include_router(order_router)
+
 
 
 @app.on_event("startup")

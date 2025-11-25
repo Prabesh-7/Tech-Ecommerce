@@ -1,4 +1,3 @@
-# app/dependencies.py
 from fastapi import Depends, HTTPException, status
 from jose import jwt, JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
