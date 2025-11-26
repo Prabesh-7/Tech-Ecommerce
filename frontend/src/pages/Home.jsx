@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { 
-  Truck, Shield, RefreshCw, CreditCard, ArrowRight, 
+  Truck, Shield, RefreshCw, CreditCard,
   Loader2, Package, ShoppingCart, Tag, Sparkles, TrendingUp 
 } from "lucide-react";
+import { useCartStore } from "../store/cartStore";
 
 export default function Home() {
   const [newArrivals, setNewArrivals] = useState([]);
@@ -15,7 +16,7 @@ export default function Home() {
   const categories = [
     { name: "Laptops",     image: "https://cdn.assets.prezly.com/cc1e3f98-2fc8-4410-8dde-76f813c9691c/Swift-Go-16-02.jpg", category: "laptop" },
     { name: "Keyboards",   image: "https://t3.ftcdn.net/jpg/04/04/98/42/360_F_404984263_XUzwxRhfgcPqAkBtFCrCw93A6ngfy1aM.jpg", category: "keyboard" },
-    { name: "Mouse",       image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNiq8ld1vKd9MxtBy88nCbHWmySf2c8P-rPw&shttps://assetsio.gnwcdn.com/g502x_f9QuuM8.jpeg?width=1200&height=900&fit=crop&quality=100&format=png&enable=upscale&auto=webp", category: "mouse" },
+    { name: "Mouse",       image: "https://havitsmart.com/cdn/shop/files/havit-gaming-mouse-ms961-rgb-programmablehavit-business-529706.jpg?v=1749802330", category: "mouse" },
     { name: "Monitors",    image: "https://image.benq.com/is/image/benqco/monitor-all-series-kv-3-m?$ResponsivePreset$&fmt=png-alpha", category: "monitor" },
     { name: "Headphones",  image: "https://media.istockphoto.com/id/1422851316/vector/3d-white-realistic-headphones-isolated-on-white-background-vector-illustration.jpg?s=612x612&w=0&k=20&c=MVbeXLM9X6jh4P9C3DYmA4FP-Ctqjpl4U7tqvEgv7rg=", category: "headphone" }
   ];
@@ -45,14 +46,10 @@ export default function Home() {
     finally { setLoadingTrending(false); }
   };
 
-  const addToCart = (product) => {
-    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-    const existing = cart.find(item => item.id === product.id);
-    if (existing) existing.quantity += 1;
-    else cart.push({ ...product, quantity: 1 });
-    localStorage.setItem("cart", JSON.stringify(cart));
-    alert(`${product.name} added to cart!`);
-  };
+    const addToCart = useCartStore((state) => state.addToCart);
+  useEffect(() => {
+    useCartStore.getState().loadCart();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">

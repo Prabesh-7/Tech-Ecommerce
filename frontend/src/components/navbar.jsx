@@ -1,33 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, User, Menu, X, LogOut, Package, Heart, Settings } from "lucide-react";
+import { 
+  ShoppingCart, 
+  User, 
+  Menu, 
+  X, 
+  LogOut, 
+  Package, 
+  Settings 
+} from "lucide-react";
+import { useCartStore } from "../store/cartStore";  
 
-function Navbar() {
+export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [cartCount, setCartCount] = useState(0);
+
+  const cartCount = useCartStore((state) => state.getCartCount());
 
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user") || "{}");
-
-
-  useEffect(() => {
-    const updateCartCount = () => {
-      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-      const total = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-      setCartCount(total);
-    };
-
-    updateCartCount();
-    window.addEventListener("storage", updateCartCount);
-    window.addEventListener("cartUpdated", updateCartCount);
-
-    return () => {
-      window.removeEventListener("storage", updateCartCount);
-      window.removeEventListener("cartUpdated", updateCartCount);
-    };
-  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -53,9 +45,11 @@ function Navbar() {
                   e.target.nextElementSibling.style.display = "block";
                 }}
               />
-              <span className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent hidden lg:block">
-                Ecommerce-by-two
-              </span>
+              <div className="hidden lg:block">
+                <span className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
+                  Ecommerce-by-two
+                </span>
+              </div>
             </Link>
           </div>
 
@@ -88,7 +82,7 @@ function Navbar() {
             >
               <ShoppingCart className="w-7 h-7 text-gray-700 group-hover:text-blue-600 transition-colors" />
               {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center animate-pulse">
+                <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center animate-pulse shadow-lg">
                   {cartCount}
                 </span>
               )}
@@ -102,7 +96,6 @@ function Navbar() {
                 <User className="w-7 h-7 text-gray-700 group-hover:text-blue-600 transition-colors" />
               </button>
 
-            
               {isUserMenuOpen && (
                 <div className="absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden animate-fade-in">
                   <div className="p-5 border-b border-gray-100">
@@ -130,10 +123,9 @@ function Navbar() {
                         <Package className="w-5 h-5 text-gray-600" />
                         <span className="font-medium">My Orders</span>
                       </Link>
-                     
                       <button
                         onClick={handleLogout}
-                        className="w-full flex items-center gap-3 px-5 py-4 hover:bg-red-50 text-red-600 transition-colors"
+                        className="w-full flex items-center gap-3 px-5 py-4 hover:bg-red-50 text-red-600 transition-colors text-left"
                       >
                         <LogOut className="w-5 h-5" />
                         <span className="font-medium">Logout</span>
@@ -161,7 +153,6 @@ function Navbar() {
               )}
             </div>
 
-    
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="lg:hidden p-3 rounded-full hover:bg-gray-100 transition-all"
@@ -174,32 +165,16 @@ function Navbar() {
         {isOpen && (
           <div className="lg:hidden border-t border-gray-200 py-4">
             <div className="space-y-3">
-              <Link
-                to="/"
-                onClick={() => setIsOpen(false)}
-                className="block px-4 py-3 text-lg font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-              >
+              <Link to="/" onClick={() => setIsOpen(false)} className="block px-4 py-3 text-lg font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
                 Home
               </Link>
-              <Link
-                to="/product"
-                onClick={() => setIsOpen(false)}
-                className="block px-4 py-3 text-lg font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-              >
+              <Link to="/product" onClick={() => setIsOpen(false)} className="block px-4 py-3 text-lg font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
                 Products
               </Link>
-              <Link
-                to="/contact"
-                onClick={() => setIsOpen(false)}
-                className="block px-4 py-3 text-lg font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-              >
+              <Link to="/contact" onClick={() => setIsOpen(false)} className="block px-4 py-3 text-lg font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
                 Contact
               </Link>
-              <Link
-                to="/cart"
-                onClick={() => setIsOpen(false)}
-                className="block px-4 py-3 text-lg font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-              >
+              <Link to="/cart" onClick={() => setIsOpen(false)} className="block px-4 py-3 text-lg font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
                 Cart ({cartCount})
               </Link>
             </div>
@@ -209,5 +184,3 @@ function Navbar() {
     </nav>
   );
 }
-
-export default Navbar;
