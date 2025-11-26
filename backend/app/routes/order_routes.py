@@ -5,81 +5,78 @@ from app.models.Order import Order
 from app.schemas.OrderValidation import OrderCreate, OrderItem
 from typing import List, Dict
 from sqlalchemy import select, text
+from sqlalchemy.orm import Session
+from app.schemas.OrderValidation import OrderResponse
 import json
+from app.dependencies import get_current_user
 
 router = APIRouter(prefix="/api", tags=["Orders"])
 
 
-# PUBLIC ROUTE — ANYONE CAN ACCESS (for homepage trending)
-# @router.get("/trending-products", response_model=List[Dict])
-# async def get_trending_products(db: AsyncSession = Depends(get_db)):
-#     """
-#     Returns Top 5 Most Ordered Products (by total quantity sold)
-#     Includes: name, total_ordered, image, price, category, id (for linking)
-#     """
-#     try:
-#         query = text("""
-#             SELECT items FROM orders 
-#             WHERE items IS NOT NULL AND items != ''
-#             ORDER BY created_at DESC
-#         """)
 
-#         result = await db.execute(query)
-#         rows = result.fetchall()
 
-#         product_stats = {}
+@router.get("/my-orders")
+async def get_my_orders(
+    current_user = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)  
+):
+   
+    user_mobile = None
 
-#         for (items_json,) in rows:
-#             try:
-#                 items = json.loads(items_json)
-#                 if not isinstance(items, list):
-#                     continue
+    
+    if hasattr(current_user, "mobile_number") and current_user.mobile_number:
+        user_mobile = current_user.mobile_number
+    
+    elif isinstance(current_user, dict) and current_user.get("mobile_number"):
+        user_mobile = current_user.get("mobile_number")
+   
+    else:
+        from app.models.User import User
+        result = await db.execute(select(User).where(User.email == current_user.email))
+        db_user = result.scalar_one_or_none()
+        if db_user and db_user.mobile_number:
+            user_mobile = db_user.mobile_number
 
-#                 for item in items:
-#                     name = item.get("name") or item.get("product_name") or "Unknown Product"
-#                     qty = int(item.get("quantity") or 1)
-#                     product_id = item.get("id")
-#                     price = float(item.get("price") or 0)
-#                     image = item.get("image")
-#                     category = item.get("category", "Uncategorized")
+    if not user_mobile:
+        raise HTTPException(
+            status_code=400,
+            detail="Mobile number not linked to your account. Please update your profile."
+        )
 
-#                     key = f"{product_id}_{name}"  # Unique key using ID + name
+    result = await db.execute(
+        select(Order)
+        .where(Order.phone == user_mobile)
+        .order_by(Order.created_at.desc())
+    )
+    orders = result.scalars().all()  
 
-#                     if key not in product_stats:
-#                         product_stats[key] = {
-#                             "id": product_id,
-#                             "name": name,
-#                             "image": image,
-#                             "price": price,
-#                             "category": category,
-#                             "total_ordered": 0
-#                         }
-#                     product_stats[key]["total_ordered"] += qty
+    if not orders:
+        return []
 
-#             except (json.JSONDecodeError, TypeError, ValueError):
-#                 continue
+    response_orders = []
+    for order in orders:
+        try:
+            items = json.loads(order.items) if order.items else []
+        except:
+            items = []
 
-#         # Sort by total_ordered DESC and get top 5
-#         top_products = sorted(
-#             product_stats.values(),
-#             key=lambda x: x["total_ordered"],
-#             reverse=True
-#         )[:5]
+        response_orders.append({
+            "id": order.id,
+            "order_id": order.order_id,
+            "customer_name": order.customer_name,
+            "phone": order.phone,
+            "address": order.address,
+            "items": items,
+            "subtotal": float(order.subtotal),
+            "tax": float(order.tax),
+            "total": float(order.total),
+            "payment_method": order.payment_method,
+            "status": order.status.capitalize(),
+            "created_at": order.created_at.strftime("%B %d, %Y • %I:%M %p") if order.created_at else "N/A"
+        })
 
-#         # Add ranking
-#         for rank, product in enumerate(top_products, start=1):
-#             product["rank"] = rank
+    return response_orders
 
-#         return top_products
-
-#     except Exception as e:
-#         print("TRENDING PRODUCTS ERROR:", str(e))
-#         raise HTTPException(
-#             status_code=500,
-#             detail="Failed to load trending products"
-#         )
-
-# TRENDING PRODUCTS — FIXED WITH REAL CATEGORY DETECTION
 @router.get("/trending-products", response_model=List[Dict])
 async def get_trending_products(db: AsyncSession = Depends(get_db)):
     try:
@@ -107,7 +104,6 @@ async def get_trending_products(db: AsyncSession = Depends(get_db)):
                     price = float(item.get("price") or 0)
                     image = item.get("image")
 
-                    # SMART CATEGORY DETECTION — MAIN FIX
                     category = item.get("category")
                     if not category or str(category).strip() in ["", "null", "None", "Uncategorized"]:
                         name_lower = name.lower()
@@ -136,7 +132,7 @@ async def get_trending_products(db: AsyncSession = Depends(get_db)):
                             "name": name,
                             "image": image or "https://via.placeholder.com/400x400?text=Hot+Item",
                             "price": price,
-                            "category": category,  # ALWAYS CLEAN & REAL
+                            "category": category,  
                             "total_ordered": 0
                         }
                     product_stats[key]["total_ordered"] += qty
@@ -144,14 +140,14 @@ async def get_trending_products(db: AsyncSession = Depends(get_db)):
             except (json.JSONDecodeError, TypeError, ValueError):
                 continue
 
-        # Top 5
+      
         top_products = sorted(
             product_stats.values(),
             key=lambda x: x["total_ordered"],
             reverse=True
         )[:5]
 
-        # Add rank
+  
         for rank, product in enumerate(top_products, start=1):
             product["rank"] = rank
 

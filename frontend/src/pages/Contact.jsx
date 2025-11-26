@@ -31,7 +31,7 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-     
+      {/* Header */}
       <div className="max-w-7xl mx-auto text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
           Get in Touch
@@ -43,10 +43,10 @@ export default function Contact() {
 
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10">
 
-        
+       
         <div className="space-y-8">
 
-         
+       
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
             <div className="relative">
               <iframe
@@ -69,7 +69,7 @@ export default function Contact() {
             </div>
           </div>
 
-        
+      
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6">
 
           
@@ -89,7 +89,7 @@ export default function Contact() {
               </div>
             </div>
 
-         
+           
             <div className="space-y-4">
               <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
                 <div className="flex items-center gap-4">
@@ -122,8 +122,7 @@ export default function Contact() {
             </div>
           </div>
 
-        
-          <div className="gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl shadow-xl p-6">
+          <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl shadow-xl p-6">
             <div className="flex items-center gap-3 mb-4">
               <Clock className="w-6 h-6" />
               <h3 className="text-xl font-bold">Office Hours</h3>
@@ -136,7 +135,6 @@ export default function Contact() {
           </div>
         </div>
 
-       
         <div className="bg-white rounded-2xl shadow-2xl p-8 lg:p-10 border border-gray-200">
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-3">Send us a Message</h2>
@@ -209,7 +207,7 @@ export default function Contact() {
               className={`w-full py-4 px-6 text-white font-bold rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3 shadow-lg ${
                 loading
                   ? "bg-gray-500 cursor-not-allowed"
-                  : "gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-blue-500/50"
+                  : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-blue-500/50"
               }`}
             >
               {loading ? (

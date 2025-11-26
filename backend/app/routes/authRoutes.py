@@ -91,7 +91,9 @@ async def login(
                 "id": user.id,
                 "first_name": user.first_name,
                 "email": user.email,
-                "role": getattr(user, "role", "user") or "user"
+                "role": getattr(user, "role", "user") or "user",
+                
+                "mobile_number": user.mobile_number
             }
         }
 

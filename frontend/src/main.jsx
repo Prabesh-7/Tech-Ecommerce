@@ -24,6 +24,7 @@ import PaymentFailure from "./pages/PaymentFailure.jsx";
 import ViewUsers from "./pages/ViewUsers.jsx";
 import AdminViewOrders from "./pages/AdminViewOrders.jsx";
 import AdminSettings from "./pages/adminSettings.jsx";
+import MyOrders from "./pages/MyOrders.jsx";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,7 @@ const router = createBrowserRouter([
       { path: "payment", element: <Payment /> },
       { path: "paymentFailure", element: <PaymentFailure /> },
       { path: "paymentSuccess", element: <PaymentSuccess /> },
+      {path:"orders",element:<MyOrders/>}
     ],
   },
 

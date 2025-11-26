@@ -11,6 +11,7 @@ function Navbar() {
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
+
   useEffect(() => {
     const updateCartCount = () => {
       const cart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -41,7 +42,6 @@ function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
 
-     
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-4 group">
               <img
@@ -53,13 +53,12 @@ function Navbar() {
                   e.target.nextElementSibling.style.display = "block";
                 }}
               />
-              <span className="text-3xl font-bold gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent hidden lg:block">
+              <span className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent hidden lg:block">
                 Ecommerce-by-two
               </span>
             </Link>
           </div>
 
-      
           <div className="hidden lg:flex items-center space-x-10">
             <Link
               to="/"
@@ -83,7 +82,6 @@ function Navbar() {
 
           <div className="flex items-center space-x-6">
 
-         
             <Link
               to="/cart"
               className="relative group p-3 rounded-full hover:bg-gray-100 transition-all duration-200"
@@ -96,7 +94,6 @@ function Navbar() {
               )}
             </Link>
 
-     
             <div className="relative">
               <button
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
@@ -105,7 +102,7 @@ function Navbar() {
                 <User className="w-7 h-7 text-gray-700 group-hover:text-blue-600 transition-colors" />
               </button>
 
-        
+            
               {isUserMenuOpen && (
                 <div className="absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden animate-fade-in">
                   <div className="p-5 border-b border-gray-100">
@@ -133,14 +130,7 @@ function Navbar() {
                         <Package className="w-5 h-5 text-gray-600" />
                         <span className="font-medium">My Orders</span>
                       </Link>
-                      <Link
-                        to="/wishlist"
-                        onClick={() => setIsUserMenuOpen(false)}
-                        className="flex items-center gap-3 px-5 py-4 hover:bg-gray-50 transition-colors"
-                      >
-                        <Heart className="w-5 h-5 text-gray-600" />
-                        <span className="font-medium">Wishlist</span>
-                      </Link>
+                     
                       <button
                         onClick={handleLogout}
                         className="w-full flex items-center gap-3 px-5 py-4 hover:bg-red-50 text-red-600 transition-colors"
@@ -171,7 +161,7 @@ function Navbar() {
               )}
             </div>
 
-
+    
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="lg:hidden p-3 rounded-full hover:bg-gray-100 transition-all"
@@ -192,7 +182,7 @@ function Navbar() {
                 Home
               </Link>
               <Link
-                to="/Product"
+                to="/product"
                 onClick={() => setIsOpen(false)}
                 className="block px-4 py-3 text-lg font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
               >

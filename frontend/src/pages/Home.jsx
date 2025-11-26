@@ -14,10 +14,10 @@ export default function Home() {
 
   const categories = [
     { name: "Laptops",     image: "https://cdn.assets.prezly.com/cc1e3f98-2fc8-4410-8dde-76f813c9691c/Swift-Go-16-02.jpg", category: "laptop" },
-    { name: "Keyboards",   image: "https://gennext.com.np/wp-content/uploads/2020/12/meetion_mk04_keyboard_4.jpg", category: "keyboard" },
-    { name: "Mouse",       image: "https://assetsio.gnwcdn.com/g502x_f9QuuM8.jpeg?width=1200&height=900&fit=crop&quality=100&format=png&enable=upscale&auto=webp", category: "mouse" },
+    { name: "Keyboards",   image: "https://t3.ftcdn.net/jpg/04/04/98/42/360_F_404984263_XUzwxRhfgcPqAkBtFCrCw93A6ngfy1aM.jpg", category: "keyboard" },
+    { name: "Mouse",       image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNiq8ld1vKd9MxtBy88nCbHWmySf2c8P-rPw&shttps://assetsio.gnwcdn.com/g502x_f9QuuM8.jpeg?width=1200&height=900&fit=crop&quality=100&format=png&enable=upscale&auto=webp", category: "mouse" },
     { name: "Monitors",    image: "https://image.benq.com/is/image/benqco/monitor-all-series-kv-3-m?$ResponsivePreset$&fmt=png-alpha", category: "monitor" },
-    { name: "Headphones",  image: "https://www.sony.com.au/image/6539959b6c50b04c5cec4e23134c1137?fmt=pjpeg&wid=1014&hei=396&bgcolor=F1F5F9&bgc=F1F5F9", category: "headphone" }
+    { name: "Headphones",  image: "https://media.istockphoto.com/id/1422851316/vector/3d-white-realistic-headphones-isolated-on-white-background-vector-illustration.jpg?s=612x612&w=0&k=20&c=MVbeXLM9X6jh4P9C3DYmA4FP-Ctqjpl4U7tqvEgv7rg=", category: "headphone" }
   ];
 
   useEffect(() => {
@@ -90,10 +90,8 @@ export default function Home() {
                   />
                   <div className="absolute inset-0 gradient-to-t from-black/70 to-transparent" />
                   <div className="absolute bottom-6 left-0 right-0 text-white text-center">
-                    <h3 className="text-2xl font-bold">{cat.name}</h3>
-                    <p className="text-sm mt-2 opacity-90 flex items-center justify-center gap-2">
-                      Shop Now <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                    </p>
+                    <h3 className="text-2xl text-black font-bold">{cat.name}</h3>
+                   
                   </div>
                 </div>
               </Link>

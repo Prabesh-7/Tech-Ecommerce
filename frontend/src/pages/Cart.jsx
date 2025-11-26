@@ -50,7 +50,7 @@ export default function Cart() {
                 className="bg-white rounded-2xl shadow-md p-6 flex flex-col sm:flex-row items-start gap-6 border border-gray-100 hover:shadow-lg transition-all"
               >
              
-                <div className="w-full sm:w-32 h-32 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0">
+                <div className="w-full sm:w-32 h-32 bg-gray-100 rounded-xl overflow-hidden shrink-0">
                   {item.image ? (
                     <img
                       src={item.image}
