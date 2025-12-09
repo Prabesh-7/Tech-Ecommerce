@@ -139,7 +139,7 @@ export default function AdminViewOrders() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="gradient-to-r from-blue-600 to-purple-600 text-white">
+              <thead className="gradient-to-r  from-blue-600 to-purple-600 text-blue-600">
                 <tr>
                   <th className="px-6 py-5 text-left text-sm font-bold uppercase tracking-wider">Order ID</th>
                   <th className="px-6 py-5 text-left text-sm font-bold uppercase tracking-wider">Customer</th>
@@ -151,7 +151,7 @@ export default function AdminViewOrders() {
                   <th className="px-6 py-5 text-center text-sm font-bold uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y  divide-gray-200">
                 {filteredOrders.map((order) => (
                   <tr key={order.id} className="hover:bg-gray-50 transition-all duration-200">
                 

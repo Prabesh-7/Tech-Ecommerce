@@ -23,7 +23,7 @@ import PaymentSuccess from "./pages/PaymentSuccess.jsx";
 import PaymentFailure from "./pages/PaymentFailure.jsx";
 import ViewUsers from "./pages/ViewUsers.jsx";
 import AdminViewOrders from "./pages/AdminViewOrders.jsx";
-import AdminSettings from "./pages/adminSettings.jsx";
+import AdminSettings from "./pages/AdminSettings.jsx"
 import MyOrders from "./pages/MyOrders.jsx";
 
 const router = createBrowserRouter([
