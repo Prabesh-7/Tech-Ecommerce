@@ -47,7 +47,7 @@ export default function Navbar() {
               />
               <div className="hidden lg:block">
                 <span className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
-                  Ecommerce-by-two
+                  Tech-Ecommerce
                 </span>
               </div>
             </Link>

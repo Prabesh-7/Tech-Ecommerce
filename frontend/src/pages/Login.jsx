@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-import { Eye, EyeOff, Mail, Lock } from "lucide-react";
-
+import { Eye, EyeOff, Mail, Lock, Package } from "lucide-react";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -18,91 +17,84 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
- const onSubmit = async (data) => {
-  setLoading(true);
-  setServerError("");
+  const onSubmit = async (data) => {
+    setLoading(true);
+    setServerError("");
 
-  try {
-    const formData = new URLSearchParams();
-    formData.append("username", data.email);
-    formData.append("password", data.password);
+    try {
+      const formData = new URLSearchParams();
+      formData.append("username", data.email);
+      formData.append("password", data.password);
 
-    const response = await axios.post(
-      "http://127.0.0.1:8000/api/login",
-      formData,
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-        },
-        timeout: 10000  
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/login",
+        formData,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          timeout: 10000
+        }
+      );
+
+      const { access_token, user } = response.data;
+
+      localStorage.setItem("token", access_token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      if (user.role === "admin") {
+        navigate("/admin/viewProduct");
+      } else {
+        navigate("/");
       }
-    );
 
-    const { access_token, user } = response.data;
-
-    localStorage.setItem("token", access_token);
-    localStorage.setItem("user", JSON.stringify(user));
-
-    console.log("Login successful:", response.data);
-    console.log("User Role:", user.role);
-
-    if (user.role === "admin") {
-      navigate("/admin/viewProduct");
-    } else {
-      navigate("/");
+    } catch (error) {
+      let msg = "Login failed.";
+      if (error.response) {
+        msg = error.response.data?.detail || "Invalid credentials";
+      } else if (error.code === "ECONNABORTED") {
+        msg = "Request timeout. Backend slow?";
+      } else if (error.request) {
+        msg = "No response from server. Is backend running?";
+      } else {
+        msg = error.message;
+      }
+      setServerError(msg);
+    } finally {
+      setLoading(false);
     }
-
-  } catch (error) {
-    console.error("FULL ERROR:", error);  
-
-    let msg = "Login failed.";
-
-    if (error.response) {
-    
-      msg = error.response.data?.detail || "Invalid credentials";
-    } else if (error.code === "ECONNABORTED") {
-      msg = "Request timeout. Backend slow?";
-    } else if (error.request) {
-      msg = "No response from server. Is backend running?";
-    } else {
-      msg = error.message;
-    }
-
-    setServerError(msg);
-  } finally {
-    setLoading(false);  
-  }
-};
-
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md">
-       
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">
-            Ecommerce-by-two
+
+        {/* Header */}
+        <div className="text-center mb-10">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-800 flex items-center justify-center gap-3">
+            <Package className="w-12 h-12 sm:w-14 sm:h-14 text-blue-600" />
+            Tech-Ecommerce
           </h1>
-          <p className="text-gray-600 mt-1 text-sm">Welcome back! Please login to continue</p>
+          <p className="text-lg sm:text-xl text-gray-600 mt-4">Welcome back! Please login to continue</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-8 border border-gray-200">
-          <h2 className="text-2xl font-bold text-center text-gray-800 mb-7">
+        {/* Login Card */}
+        <div className="bg-white rounded-3xl shadow-2xl p-8 sm:p-10 border border-gray-100">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-10">
             Sign In
           </h2>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-           
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 sm:space-y-8">
+            {/* Email */}
             <div>
-              <label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                <Mail className="w-4 h-4 text-gray-500" />
+              <label className="block text-sm sm:text-base font-bold text-gray-700 mb-3 flex items-center gap-2">
+                <Mail className="w-5 h-5 text-blue-600" />
                 Email Address
               </label>
               <div className="relative">
                 <input
                   type="email"
-                  className="w-full px-4 py-3 pl-11 text-sm bg-gray-50 border border-gray-300 rounded-md focus:bg-white focus:border-gray-400 focus:ring-2 focus:ring-gray-100 transition-all duration-200 outline-none"
+                  className="w-full px-5 sm:px-6 py-4 pl-14 sm:pl-16 bg-gray-50 border-2 border-gray-300 rounded-2xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all text-base sm:text-lg"
                   placeholder="you@example.com"
                   {...register("email", {
                     required: "Email is required",
@@ -112,99 +104,81 @@ const Login = () => {
                     },
                   })}
                 />
-                <Mail className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
+                <Mail className="absolute left-5 top-5 w-6 h-6 text-gray-400" />
               </div>
               {errors.email && (
-                <p className="text-red-500 text-xs mt-1.5">{errors.email.message}</p>
+                <p className="mt-2 text-sm text-red-600 font-medium">{errors.email.message}</p>
               )}
             </div>
 
+            {/* Password */}
             <div>
-              <label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                <Lock className="w-4 h-4 text-gray-500" />
+              <label className="block text-sm sm:text-base font-bold text-gray-700 mb-3 flex items-center gap-2">
+                <Lock className="w-5 h-5 text-blue-600" />
                 Password
               </label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
-                  maxLength="72"
-                  className="w-full px-4 py-3 pl-11 pr-12 text-sm bg-gray-50 border border-gray-300 rounded-md focus:bg-white focus:border-gray-400 focus:ring-2 focus:ring-gray-100 transition-all duration-200 outline-none"
+                  className="w-full px-5 sm:px-6 py-4 pl-14 sm:pl-16 pr-16 bg-gray-50 border-2 border-gray-300 rounded-2xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all text-base sm:text-lg"
                   placeholder="••••••••"
                   {...register("password", {
                     required: "Password is required",
                     minLength: { value: 8, message: "Password must be at least 8 characters" },
                   })}
                 />
-                <Lock className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
+                <Lock className="absolute left-5 top-5 w-6 h-6 text-gray-400" />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600"
+                  className="absolute right-5 top-5 text-gray-400 hover:text-gray-600"
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPassword ? <EyeOff className="w-6 h-6" /> : <Eye className="w-6 h-6" />}
                 </button>
               </div>
               {errors.password && (
-                <p className="text-red-500 text-xs mt-1.5">{errors.password.message}</p>
+                <p className="mt-2 text-sm text-red-600 font-medium">{errors.password.message}</p>
               )}
             </div>
 
-        
+            {/* Server Error */}
             {serverError && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm text-center">
-                {serverError}
+              <div className="bg-red-50 border-2 border-red-200 text-red-700 px-6 py-4 rounded-2xl text-center">
+                <p className="font-bold text-base sm:text-lg">{serverError}</p>
               </div>
             )}
 
-      
-            <button
-              type="submit"
-              disabled={loading}
-              className={`w-full py-3.5 mt-3 text-white font-medium rounded-md transition-all duration-200 transform active:scale-95 ${
-                loading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-gray-800 hover:bg-gray-900 shadow-md hover:shadow-lg"
-              }`}
-            >
-              {loading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                      fill="none"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                    />
-                  </svg>
-                  Logging in...
-                </span>
-              ) : (
-                "Sign In"
-              )}
-            </button>
+            {/* Submit Button */}
+            <div className="text-center">
+              <button
+                type="submit"
+                disabled={loading}
+                className={`w-full px-12 sm:px-16 py-4 sm:py-5 text-white font-bold text-lg sm:text-xl rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl ${
+                  loading
+                    ? "bg-gray-500 cursor-not-allowed"
+                    : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
+                }`}
+              >
+                {loading ? "Logging in..." : "Sign In"}
+              </button>
+            </div>
           </form>
 
-          <p className="text-center mt-7 text-sm text-gray-600">
+          {/* Register Link */}
+          <p className="text-center mt-8 sm:mt-10 text-base sm:text-lg text-gray-600">
             Don't have an account?{" "}
             <Link
               to="/register"
-              className="font-medium text-gray-800 hover:text-gray-900 hover:underline"
+              className="font-bold text-blue-600 hover:text-blue-700 hover:underline"
             >
               Register here
             </Link>
           </p>
         </div>
 
-        <p className="text-center mt-8 text-xs text-gray-500">
-          © 2025 ecommerce-by-two. All rights reserved.
+        {/* Footer */}
+        <p className="text-center mt-10 text-sm sm:text-base text-gray-500">
+          © 2025 Tech-Ecommerce. All rights reserved.
         </p>
       </div>
     </div>
